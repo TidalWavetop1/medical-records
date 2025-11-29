@@ -1,0 +1,67 @@
+-- 1. Bảng USERS
+CREATE TABLE users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT, -- MySQL dùng INT AUTO_INCREMENT
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    full_name TEXT,
+    role TEXT DEFAULT 'DOCTOR'
+);
+
+-- 2. Bảng BỆNH NHÂN
+CREATE TABLE benh_nhan (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ma_benh_nhan TEXT NOT NULL UNIQUE,
+    ho_ten TEXT NOT NULL,
+    nam_sinh TEXT,
+    gioi_tinh TEXT DEFAULT 'Nữ'
+);
+
+-- 3. Bảng KẾT QUẢ (Quan trọng nhất)
+CREATE TABLE ket_qua_xet_nghiem (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    benh_nhan_id INTEGER,
+    bac_si_thuc_hien_id INTEGER,
+    ngay_nhap TEXT DEFAULT (datetime('now','localtime')), -- SQLite xử lý ngày tháng hơi khác
+    ma_bieu_mau TEXT NOT NULL, 
+    du_lieu_kham TEXT, -- SQLite không có kiểu JSON riêng, cứ lưu JSON dưới dạng TEXT
+    FOREIGN KEY (benh_nhan_id) REFERENCES benh_nhan(id),
+    FOREIGN KEY (bac_si_thuc_hien_id) REFERENCES users(id)
+);
+
+-- 4. Bảng DANH MỤC
+CREATE TABLE danh_muc (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ma_form TEXT,
+    ten_truong TEXT,
+    gia_tri TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_benh_nhan_ma ON benh_nhan(ma_benh_nhan);
+CREATE INDEX IF NOT EXISTS idx_benh_nhan_ten ON benh_nhan(ho_ten);
+CREATE INDEX IF NOT EXISTS idx_ket_qua_benh_nhan_id ON ket_qua_xet_nghiem(benh_nhan_id);
+
+-- Thêm cột ho_ten_search kiểu TEXT, mặc định NULL
+ALTER TABLE benh_nhan
+ADD COLUMN ho_ten_search TEXT;
+
+DROP INDEX IF EXISTS idx_benh_nhan_ten
+CREATE INDEX IF NOT EXISTS idx_benh_nhan_search ON benh_nhan(ho_ten_search)
+
+UPDATE benh_nhan
+SET ho_ten_search = lower(ho_ten);
+CREATE VIRTUAL TABLE IF NOT EXISTS benh_nhan_fts 
+            USING fts5(ho_ten_search, ma_benh_nhan, content='benh_nhan', content_rowid='id');
+CREATE TRIGGER IF NOT EXISTS benh_nhan_ai AFTER INSERT ON benh_nhan BEGIN
+              INSERT INTO benh_nhan_fts(rowid, ho_ten_search, ma_benh_nhan) 
+              VALUES (new.id, new.ho_ten_search, new.ma_benh_nhan);
+            END;
+CREATE TRIGGER IF NOT EXISTS benh_nhan_ad AFTER DELETE ON benh_nhan BEGIN
+              INSERT INTO benh_nhan_fts(benh_nhan_fts, rowid, ho_ten_search, ma_benh_nhan) 
+              VALUES('delete', old.id, old.ho_ten_search, old.ma_benh_nhan);
+            END;
+CREATE TRIGGER IF NOT EXISTS benh_nhan_au AFTER UPDATE ON benh_nhan BEGIN
+              INSERT INTO benh_nhan_fts(benh_nhan_fts, rowid, ho_ten_search, ma_benh_nhan) 
+              VALUES('delete', old.id, old.ho_ten_search, old.ma_benh_nhan);
+              INSERT INTO benh_nhan_fts(rowid, ho_ten_search, ma_benh_nhan) 
+              VALUES (new.id, new.ho_ten_search, new.ma_benh_nhan);
+            END;
