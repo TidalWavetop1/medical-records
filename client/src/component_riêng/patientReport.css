@@ -1,0 +1,130 @@
+/* ReportTemplate.css */
+.report-template-container {
+    background: #fff;
+    padding: 30px;
+    border: 1px solid #ccc;
+    font-family: 'Times New Roman', Times, serif;
+    /* Font văn bản hành chính */
+    font-size: 16px;
+    line-height: 1.5;
+    color: #000;
+}
+
+.section-title {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.section-header {
+    margin-top: 20px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.report-row,
+.report-item {
+    margin-bottom: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+}
+
+.bold-label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.item-number {
+    width: 25px;
+    font-weight: bold;
+}
+
+/* Input kiểu dòng kẻ chấm */
+.dotted-input {
+    border: none;
+    border-bottom: 1px dotted #000;
+    outline: none;
+    padding: 0 5px;
+    flex: 1;
+    /* Tự động giãn hết chiều ngang còn lại */
+    font-family: inherit;
+    font-size: inherit;
+    min-width: 100px;
+}
+
+.dotted-input.small {
+    flex: none;
+    width: 50px;
+    text-align: center;
+}
+
+.dotted-input.full-width {
+    width: 100%;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Checkbox group */
+.checkbox-group {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+/* Phần thụt đầu dòng (Hạch vùng) */
+.indent-block {
+    margin-left: 25px;
+    width: 100%;
+}
+
+.nested-block {
+    margin-left: 20px;
+    border-left: 2px solid #eee;
+    padding-left: 10px;
+}
+
+.deep-nested {
+    margin-left: 20px;
+}
+
+.sub-item {
+    margin-left: 25px;
+    width: 100%;
+    display: flex;
+    margin-bottom: 5px;
+}
+
+.sub-line {
+    display: flex;
+    align-items: baseline;
+    margin-bottom: 5px;
+    gap: 5px;
+}
+
+.radio-line,
+.check-line {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Textarea kết luận */
+.conclusion-area {
+    width: 100%;
+    border: 1px solid #ccc;
+    padding: 10px;
+    font-family: inherit;
+    font-size: inherit;
+    resize: vertical;
+}
